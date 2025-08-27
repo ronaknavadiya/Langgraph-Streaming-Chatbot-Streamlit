@@ -5,6 +5,7 @@ import os
 from langgraph.graph import StateGraph, START, END
 from typing import TypedDict, Annotated
 from langgraph.graph.message import add_messages
+from langgraph.checkpoint.memory import InMemorySaver
 
 
 load_dotenv()
@@ -32,6 +33,8 @@ def chat_node(state: ChatbotState):
     response = llm.invoke(messages)
     return {"messages":[response]}
 
+checkpointer = InMemorySaver()
+
 graph = StateGraph(ChatbotState)
 
 # nodes
@@ -41,7 +44,7 @@ graph.add_node("chat_node", chat_node)
 graph.add_edge(START, "chat_node")
 graph.add_edge("chat_node",END)
 
-chatbot = graph.compile()
+chatbot = graph.compile(checkpointer=checkpointer)
 
 response = chatbot.invoke({"messages":[HumanMessage("Hi")]})
 
