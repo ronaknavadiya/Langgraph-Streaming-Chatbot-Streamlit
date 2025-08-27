@@ -46,8 +46,8 @@ graph.add_edge("chat_node",END)
 
 chatbot = graph.compile(checkpointer=checkpointer)
 
-response = chatbot.invoke({"messages":[HumanMessage("Hi")]})
+# response = chatbot.invoke({"messages":[HumanMessage("Hi")]})
 
-print(response)
+# print(response)
 
 
