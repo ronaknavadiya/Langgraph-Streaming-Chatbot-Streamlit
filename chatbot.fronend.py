@@ -1,29 +1,68 @@
 import streamlit as st
 from chatbot_backend import chatbot
 from langchain_core.messages import HumanMessage
+from utilities import generate_unique_thread_id
 
+def add_thread_to_thread_list(thread_id):
+    if thread_id not in st.session_state["thread_list"]:
+        st.session_state["thread_list"].append(thread_id)
 
-CONFIG = {'configurable': {'thread_id': 'thread-1'}}
+def reset_chat():
+    st.session_state["message_history"] = []
+    st.session_state["thread_id"] = generate_unique_thread_id()
+    add_thread_to_thread_list(st.session_state['thread_id'])
+
+   
+def load_previous_conversation_history(thread_id):
+    state = chatbot.get_state(
+                config={'configurable': {'thread_id': thread_id}}
+            )
+    # Check if messages key exists in state values, return empty list if not
+    return state.values.get('messages', [])
 
 #------------------------------------   Init Setup ------------------------------------#
 
 if 'message_history' not in st.session_state:
     st.session_state['message_history'] = []
 
+if "thread_list" not in st.session_state:
+    st.session_state['thread_list'] = []
 
-# loading the conversation history
+if 'thread_id' not in st.session_state:
+    st.session_state['thread_id'] = generate_unique_thread_id()
+
+add_thread_to_thread_list(st.session_state['thread_id'])
+
+
+#------------------------------ loading the conversation history ----------------------------#
 for message in st.session_state['message_history']:
     with st.chat_message(message['role']):
         st.text(message['content'])
+
+CONFIG = {'configurable': {'thread_id': st.session_state['thread_id']}}
 
 
 # ---------------------------------------- Side bar UI -------------------------------------#
 
 st.sidebar.title("My Conversations")
 
-st.sidebar.button("New Chat")
+if st.sidebar.button("New Chat"):
+    reset_chat()
 
-st.sidebar.text("thread")
+for thread_id in st.session_state["thread_list"]:
+    if st.sidebar.button(str(thread_id)):
+        messages = load_previous_conversation_history(thread_id)
+        sanitized_messages = []
+        for msg in messages:
+            if isinstance(msg, HumanMessage):
+                role = "user"
+            else:
+                role = "assistant"
+            sanitized_messages.append({'role': role, 'content': msg.content})
+
+        st.session_state['message_history'] = sanitized_messages
+
+
 
 
 # ------------------------------------------Screen  UI ---------------------------------------- #
@@ -44,7 +83,5 @@ if user_input:
                 stream_mode='messages'
             )
         )
-        # ai_message = chatbot.invoke({"messages":[HumanMessage(content=user_input)]}, config= CONFIG)["messages"][-1].content
-        # st.write(ai_message)
-    
+
     st.session_state['message_history'].append({'role': 'assistant', 'content': ai_message})
