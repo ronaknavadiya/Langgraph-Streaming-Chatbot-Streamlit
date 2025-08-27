@@ -16,6 +16,16 @@ for message in st.session_state['message_history']:
     with st.chat_message(message['role']):
         st.text(message['content'])
 
+
+# ---------------------------------------- Side bar UI -------------------------------------#
+
+st.sidebar.title("My Conversations")
+
+st.sidebar.button("New Chat")
+
+st.sidebar.text("thread")
+
+
 # ------------------------------------------Screen  UI ---------------------------------------- #
 user_input = st.chat_input("Type here...")
 
