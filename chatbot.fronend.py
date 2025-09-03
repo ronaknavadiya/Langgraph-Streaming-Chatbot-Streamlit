@@ -40,13 +40,15 @@ add_thread_to_thread_list(st.session_state['thread_id'])
 
 st.sidebar.title("My Conversations")
 
-if st.sidebar.button("New Chat"):
+if st.sidebar.button(label="New Chat"):
     reset_chat()
 
-for thread_id in st.session_state["thread_list"]:
-    if st.sidebar.button(str(thread_id)):
+for thread_id in st.session_state["thread_list"][::-1]:
+    messages = load_previous_conversation_history(thread_id)
+    buttonTitle = messages[0].content[:30] if len(messages)>0 else f"Current Chat Window {thread_id}"
+    if st.sidebar.button(str(buttonTitle)):
         st.session_state["thread_id"] = thread_id
-        messages = load_previous_conversation_history(thread_id)
+        
         sanitized_messages = []
         for msg in messages:
             if isinstance(msg, HumanMessage):
