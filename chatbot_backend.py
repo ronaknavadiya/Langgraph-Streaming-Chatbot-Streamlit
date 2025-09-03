@@ -46,8 +46,15 @@ graph.add_edge("chat_node",END)
 
 chatbot = graph.compile(checkpointer=checkpointer)
 
-# response = chatbot.invoke({"messages":[HumanMessage("Hi")]})
 
-# print(response)
+#----------------------- Test Backend functions ---------------------------  #
+
+# response = chatbot.invoke({"messages":[HumanMessage("Hi")]}, config={'configurable': {'thread_id': '356a5548-23e9-49a8-ac74-7f0a6bcd66d8'}})
+
+# # print(response)
+
+# print(chatbot.get_state(
+#                 config={'configurable': {'thread_id': '356a5548-23e9-49a8-ac74-7f0a6bcd66d8'}}
+#             ))
 
 
