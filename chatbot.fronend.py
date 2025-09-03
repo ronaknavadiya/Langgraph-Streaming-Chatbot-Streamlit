@@ -1,5 +1,5 @@
 import streamlit as st
-from chatbot_backend import chatbot
+from chatbot_backend import chatbot, extract_unique_threads
 from langchain_core.messages import HumanMessage,AIMessage
 from utilities import generate_unique_thread_id
 
@@ -29,7 +29,7 @@ if 'message_history' not in st.session_state:
     st.session_state['message_history'] = []
 
 if "thread_list" not in st.session_state:
-    st.session_state['thread_list'] = []
+    st.session_state['thread_list'] = extract_unique_threads()
 
 if 'thread_id' not in st.session_state:
     st.session_state['thread_id'] = generate_unique_thread_id()

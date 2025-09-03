@@ -2,3 +2,6 @@ myenv
 .env
 .vscode
 __pycache__
+Chatbot-Database
+Chatbot-Database-shm
+Chatbot-Database-wal
