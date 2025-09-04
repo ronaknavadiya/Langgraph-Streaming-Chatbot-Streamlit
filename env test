@@ -1,0 +1,5 @@
+OLLAMA_MODEL="llama3.1"
+LANGCHAIN_TRACING_V2=true
+LANGCHAIN_ENDPOINT='https://api.smith.langchain.com'
+LANGCHAIN_API_KEY='Your API Key'
+LANGCHAIN_PROJECT='Langgraph Chatbot Project'

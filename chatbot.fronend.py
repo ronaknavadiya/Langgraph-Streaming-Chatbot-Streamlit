@@ -81,7 +81,13 @@ if user_input:
         def ai_stream():
             for message_chunk, metadata in  chatbot.stream(
                 {"messages": [HumanMessage(content= user_input)]},
-                config={'configurable': {'thread_id': st.session_state['thread_id']}},
+                config={
+                    'configurable': {'thread_id': st.session_state['thread_id']},
+                    "metadata":{
+                        "thread_id": st.session_state["thread_id"]
+                    },
+                    "run_name":"Chat Turn"
+                },
                 stream_mode="messages"
             ):
                 if isinstance(message_chunk, AIMessage):
