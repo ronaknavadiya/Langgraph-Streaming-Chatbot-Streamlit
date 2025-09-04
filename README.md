@@ -1,7 +1,7 @@
-working chatbot.png is Demo of this app
+Folder working_chatbot_pictures have Demo of this project
 
 
-![alt text](<Working chatbot.png>)
+![alt text](image.png)
 
 
 
