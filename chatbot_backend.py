@@ -64,6 +64,9 @@ def extract_unique_threads():
 
     return list(unique_threads)
 
+def remove_specific_thread(thread_id):
+    checkpointer.delete_thread(thread_id=thread_id)
+
 
 #----------------------- Test Backend functions ---------------------------  #
 
