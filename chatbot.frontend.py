@@ -1,9 +1,7 @@
 import streamlit as st
-from chatbot_backend import chatbot, extract_unique_threads
+from chatbot_backend import chatbot, extract_unique_threads, remove_specific_thread
 from langchain_core.messages import HumanMessage,AIMessage
 from utilities import generate_unique_thread_id
-
-
 
 def reset_chat():
     st.session_state["thread_id"] = generate_unique_thread_id()
@@ -45,21 +43,29 @@ if st.sidebar.button(label="New Chat"):
 
 for thread_id in st.session_state["thread_list"][::-1]:
     messages = load_previous_conversation_history(thread_id)
-    buttonTitle = messages[0].content[:30] if len(messages)>0 else f"Current Chat Window {thread_id}"
-    if st.sidebar.button(str(buttonTitle)):
-        st.session_state["thread_id"] = thread_id
-        
-        sanitized_messages = []
-        for msg in messages:
-            if isinstance(msg, HumanMessage):
-                role = "user"
-            else:
-                role = "assistant"
-            sanitized_messages.append({'role': role, 'content': msg.content})
+    buttonTitle = messages[0].content[:30] if len(messages) > 0 else f"Current Chat Window {thread_id}"
 
-        st.session_state['message_history'] = sanitized_messages
+    # Sidebar row with 2 columns: "open" button and "delete" button
+    with st.sidebar.container():
+        col1, col2 = st.columns([4, 1])  # adjust ratio for spacing
+        with col1:
+            if st.button(str(buttonTitle), key=f"open_{thread_id}"):
+                st.session_state["thread_id"] = thread_id
 
+                sanitized_messages = []
+                for msg in messages:
+                    role = "user" if isinstance(msg, HumanMessage) else "assistant"
+                    sanitized_messages.append({'role': role, 'content': msg.content})
 
+                st.session_state['message_history'] = sanitized_messages
+
+        with col2:
+            if st.button("🗑", key=f"delete_{thread_id}"):  # trash icon as label
+                # remove thread from db first
+                remove_specific_thread(thread_id)
+                st.session_state["thread_list"].remove(thread_id)
+                st.success(f"Deleted thread {thread_id}")
+                st.rerun()
 #------------------------------ loading the conversation history ----------------------------#
 for message in st.session_state['message_history']:
     with st.chat_message(message['role']):

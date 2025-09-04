@@ -18,10 +18,12 @@ connectionStr = sqlite3.connect("Chatbot-Database", check_same_thread=False)
 # --------------------------  configure LLM -----------------------------#
 
 model = os.getenv("OLLAMA_MODEL", "llama3.1")
+base_url = os.getenv("OLLAMA_BASE_URL", "http://localhost:11434")
 
 llm = ChatOllama(
     model=model,
     temperature=0.3,
+    base_url=base_url
 )
 # messages = [
 #     (
@@ -61,6 +63,9 @@ def extract_unique_threads():
         unique_threads.add(checkpoint.config['configurable']['thread_id'])
 
     return list(unique_threads)
+
+def remove_specific_thread(thread_id):
+    checkpointer.delete_thread(thread_id=thread_id)
 
 
 #----------------------- Test Backend functions ---------------------------  #
